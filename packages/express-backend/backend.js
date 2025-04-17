@@ -2,7 +2,7 @@
 import express from "express";
 
 const app = express();
-const port = 8000;
+const port = 3000;
 
 app.use(express.json());
 
@@ -40,6 +40,23 @@ const users = {
     }
   ]
 };
+const findUserByName = (name) => {
+  return users["users_list"].filter(
+    (user) => user["name"] === name
+  );
+};
+
+app.get("/users", (req, res) => {
+  const name = req.query.name;
+  if (name != undefined) {
+    let result = findUserByName(name);
+    result = { users_list: result };
+    res.send(result);
+  } else {
+    res.send(users);
+  }
+});
+
 const findUserById = (id) =>
   users["users_list"].find((user) => user["id"] === id);
 
@@ -50,6 +67,18 @@ app.get("/users/:id", (req, res) => {
     res.status(404).send("Resource not found.");
   } else {
     res.send(result);
+  }
+});
+
+app.delete("/users/:id", (req, res) => {
+  const id = req.params["id"]; //or req.params.id
+  const index = users.users_list.findIndex(user => user.id === id);
+  
+  if (index === -1) {
+    res.status(404).send("Can't find user");
+  } else {
+    users.users_list.splice(index,1);
+    res.status(200).send(`User ${id} has been deleted.`);
   }
 });
 
