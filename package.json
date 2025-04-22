@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run -w react-frontend dev"
   },
   "author": "",
   "license": "ISC",
@@ -92,6 +93,7 @@
     "react-dom": "^19.1.0",
     "react-frontend": "^0.0.0",
     "react-refresh": "^0.14.2",
+    "react-scripts": "^5.0.1",
     "resolve-from": "^4.0.0",
     "rollup": "^4.39.0",
     "scheduler": "^0.26.0",
@@ -110,6 +112,8 @@
     "yallist": "^3.1.1",
     "yocto-queue": "^0.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
   "description": ""
 }
