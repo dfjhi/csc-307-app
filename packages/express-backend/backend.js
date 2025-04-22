@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-const port = 3000;
+const port = 8000;
 app.use(cors());
 app.use(express.json());
 
@@ -113,7 +113,7 @@ const addUser = (user) => {
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
   addUser(userToAdd);
-  res.send();
+  res.status(201).json({ message: "created user", user: userToAdd });
 });
 
 app.get("/users", (req, res) => {
