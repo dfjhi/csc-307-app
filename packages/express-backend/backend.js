@@ -122,6 +122,9 @@ app.get("/users", (req, res) => {
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+const generateRandomId = () => {
+  return Math.random().toString(36).substr(2, 8); // Generates a short random string
+};
 
 app.listen(port, () => {
   console.log(
