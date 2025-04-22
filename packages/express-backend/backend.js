@@ -105,26 +105,38 @@ app.delete("/users/:id", (req, res) => {
   }
 });
 
-const addUser = (user) => {
-  users["users_list"].push(user);
-  return user;
+const generateRandomId = () => {
+  return Math.random().toString(36).substr(2, 8); 
 };
 
+
+const addUser = (user) => {
+  const newUser = { ...user, id: generateRandomId() };
+  users["users_list"].push(newUser);
+  return newUser; 
+};
 app.post("/users", (req, res) => {
-  const userToAdd = req.body;
-  addUser(userToAdd);
-  res.status(201).json({ message: "created user", user: userToAdd });
+  const userToAdd = req.body; 
+  const newUser = { ...userToAdd, id: generateRandomId() };  
+  users["users_list"].push(newUser);  
+  res.status(201).send(newUser);
 });
 
-app.get("/users", (req, res) => {
-  res.send(users);
+app.delete("/users/:id", (req, res) => {
+  const id = req.params.id;
+  const index = users["users_list"].findIndex(user => user["id"] === id);
+
+  if (index !== -1) {
+    const deletedUser = users["users_list"].splice(index, 1)[0]; 
+    res.status(200).send(deletedUser); 
+    res.status(404).json({ error: "User not found" });
+  }
 });
+
+// Root route
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-const generateRandomId = () => {
-  return Math.random().toString(36).substr(2, 8); // Generates a short random string
-};
 
 app.listen(port, () => {
   console.log(
