@@ -7,27 +7,57 @@ dotenv.config();
 
 const { MONGO_CONNECTION_STRING } = process.env;
 
+
 mongoose.set("debug", true);
 mongoose
-  .connect(MONGO_CONNECTION_STRING + "users") // connect to Db "users"
+  .connect(MONGO_CONNECTION_STRING + "users") 
   .catch((error) => console.log(error));
-  
+
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
 app.get("/users", (req, res) => {
-  const name = req.query.name;
-  const job = req.query.job;
+  const { name, job } = req.query;
 
-  userService.getUsers(name, job)
-    .then((users) => {
-      res.json({ users_list: users });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
+  if (name && job) {
+    
+    userService.getUsers(name, job)
+      .then((users) => {
+        res.json({ users_list: users });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  } else if (name) {
+    
+    userService.findUserByName(name)
+      .then((users) => {
+        res.json({ users_list: users });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  } else if (job) {
+    
+    userService.findUserByJob(job)
+      .then((users) => {
+        res.json({ users_list: users });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  } else {
+    
+    userService.getUsers()
+      .then((users) => {
+        res.json({ users_list: users });
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  }
 });
 
 app.get("/users/:id", (req, res) => {
@@ -36,7 +66,7 @@ app.get("/users/:id", (req, res) => {
   userService.findUserById(id)
     .then((user) => {
       if (!user) {
-        res.status(404).send("Resource not found.");
+        res.status(404).send("not found.");
       } else {
         res.json(user);
       }
@@ -52,6 +82,22 @@ app.post("/users", (req, res) => {
   userService.addUser(userToAdd)
     .then((savedUser) => {
       res.status(201).json(savedUser);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
+app.delete("/users/:id", (req, res) => {
+  const id = req.params.id;
+
+  userService.findUserByIdAndDelete(id)
+    .then((result) => {
+      if (!result) {
+        res.status(404).send("User not found");
+      } else {
+        res.status(200).send(`User id ${id} has been deleted`);
+      }
     })
     .catch((err) => {
       res.status(500).json({ error: err.message });
